@@ -25,5 +25,10 @@ def post_comment():
     return 'success'
 
 
+@app.route('/livechat.js')
+def livechat_js():
+    return send_file('livechat.js')
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', threaded=True)
