@@ -22,7 +22,8 @@ def post_comment():
     body = request.args.get('body')
     CHAT.append({'name': name,
                  'body': body})
+    return 'success'
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', threaded=True)

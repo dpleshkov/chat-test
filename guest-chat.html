@@ -2,13 +2,56 @@
     <head>
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
         <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
 
         <!-- Optional theme -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"  crossorigin="anonymous">
 
         <!-- Latest compiled and minified JavaScript -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+        <script type='text/javascript'>
+            function httpGetAsync(theUrl, callback) {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.send(null);
+};
+            function isScrolledToBottom(el) {
+                var $el = $(el);
+                return el.scrollHeight - $el.scrollTop() - $el.outerHeight() < 1;
+            }
+            function updateChat() {
+                $.getJSON({
+                    url: '/chat.json',
+                    success: function(data) {
+                        var myNode = document.getElementById("chat-col");
+                        while (myNode.firstChild) {
+                            myNode.removeChild(myNode.firstChild);
+                        }
+                        chatCol = document.getElementById('chat-col');
+                        data.forEach(function(item){
+                            span = document.createElement('span');
+                            bold = document.createElement('b');
+                            t = document.createTextNode(item.name+': ');
+                            bold.appendChild(t);
+                            span.appendChild(bold);
+                            t = document.createTextNode(item.body);
+                            span.appendChild(t);
+                            br = document.createElement('br');
+                            chatCol.appendChild(span);
+                            chatCol.appendChild(br);
+                        });
+                        var objDiv = document.getElementById("chat-col");
+                        objDiv.scrollTop = objDiv.scrollHeight;
+                    }
+                })
+            };
+            updateChat();
+            setInterval(updateChat, 100);
+        </script>
     </head>
     <body>
         <div class='container-fluid'>
@@ -31,7 +74,31 @@
                 </form>
             </div>
             </nav>
-            
+            <div class='row'>
+                <div class='col-sm-8'>
+                    <h1>Welcome to Chat!</h1>
+                    <div id='chat-col' style="overflow-x: scroll; height: 400px;">
+                    </div>
+                    <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+                    <form action='/post' id='comment-form' target='hiddenFrame' onsubmit="">
+                        <div class='form-group'>
+                            <input type='text' class='form-control' placeholder='Your name here' name='name' value='Guest'/>
+                        </div>
+                        <div class='form-group'>
+                            <input type='text' class='form-control' placeholder='Your comment here' name='body' autofocus='on' id='comment-input'/>
+                        </div>
+                        <button class='btn btn-danger' type='submit'>Post</button>
+                    </form>
+                </div>
+                <div class='col-sm-4'>
+                    <h1>Chat Rules</h1>
+                    <ul>
+                        <li>No profanity or inappropriate language allowed.</li>
+                        <li>Be polite to other people.</li>
+                        <li>No spam or personal attacks allowed</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </body>
 </html>
